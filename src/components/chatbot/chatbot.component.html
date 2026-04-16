@@ -1,0 +1,54 @@
+
+<div class="h-full flex flex-col bg-slate-800 rounded-lg overflow-hidden">
+  <!-- Chat History -->
+  <div #chatContainer class="flex-1 p-6 space-y-6 overflow-y-auto">
+    @for (message of messages(); track $index) {
+      <div class="flex items-start gap-4" [class.justify-end]="message.role === 'user'">
+        @if (message.role === 'model') {
+          <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-sm flex-shrink-0">AI</div>
+        }
+        <div 
+          class="max-w-xl p-4 rounded-lg shadow-md"
+          [class.bg-slate-700]="message.role === 'model'"
+          [class.bg-indigo-600]="message.role === 'user'">
+            @if (message.role === 'model' && message.text === '') {
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 bg-slate-400 rounded-full animate-pulse"></span>
+                    <span class="w-2 h-2 bg-slate-400 rounded-full animate-pulse [animation-delay:0.2s]"></span>
+                    <span class="w-2 h-2 bg-slate-400 rounded-full animate-pulse [animation-delay:0.4s]"></span>
+                </div>
+            } @else {
+               <p class="text-white whitespace-pre-wrap">{{ message.text }}</p>
+            }
+        </div>
+        @if (message.role === 'user') {
+          <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center font-bold text-sm flex-shrink-0">U</div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Input Form -->
+  <div class="p-4 bg-slate-900/50 border-t border-slate-700">
+    @if(error()) {
+        <p class="text-red-400 text-sm text-center mb-2">{{ error() }}</p>
+    }
+    <form (ngSubmit)="sendMessage()" class="flex items-center gap-4">
+      <input 
+        type="text"
+        [(ngModel)]="userInput"
+        name="userInput"
+        placeholder="Type your message..."
+        class="flex-1 bg-slate-700 border border-slate-600 rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow duration-200"
+        [disabled]="isLoading()">
+      <button 
+        type="submit" 
+        class="bg-indigo-600 rounded-full p-3 text-white hover:bg-indigo-500 disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-indigo-500"
+        [disabled]="isLoading() || userInput().trim().length === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+          <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
+        </svg>
+      </button>
+    </form>
+  </div>
+</div>
